@@ -51,6 +51,7 @@
     "husky": "^7.0.4",
     "lint-staged": "^12.3.5",
     "module-resolver": "^1.0.0",
+    "prettier": "^2.5.1",
     "prisma": "^3.10.0",
     "ts-node-dev": "^1.1.8",
     "tsconfig-paths": "^3.13.0",
