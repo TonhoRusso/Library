@@ -1,0 +1,62 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("PRISMA_DATABASE_URL")
+}
+
+enum Status {
+  NEW
+  USED
+  OLD
+}
+
+model Book {
+  id                   String      @id @default(uuid())
+  bookName             String
+  edition              String
+  year                 String      @unique
+  releaseDate          DateTime
+  status               Status
+  institution          Institution @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  institutionId        String
+  quantity             Int
+  locationAddress      String
+  locationNumber       Int
+  locationZipCode      String
+  locationComplemation String
+
+  @@map("book")
+}
+
+model User {
+  id       String @id @default(uuid())
+  name     String
+  email    String
+  userName String
+  password String
+
+  Institution Institution[]
+
+  @@map("user")
+}
+
+model Institution {
+  id                   String @id @default(uuid())
+  nameOfInstitution    String @unique
+  address              String
+  addressNumber        String
+  zipCode              String
+  complement           String
+  admin                User   @relation(fields: [adminOfInstitutionId], references: [id], onDelete: Cascade)
+  adminOfInstitutionId String
+
+  Book Book[]
+
+  @@map("institution")
+}
