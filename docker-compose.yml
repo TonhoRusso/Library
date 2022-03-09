@@ -1,0 +1,22 @@
+version: '3.9'
+
+services:
+  database:
+    image: postgres
+    container_name: pglibrary
+    ports:
+      - '${POSTGRES_PORT}:${POSTGRES_PORT}'
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=library
+    volumes:
+      - pgdata:/data/postgres
+
+  redis:
+    image: redis:alpine
+    ports:
+      - '6379:6379'
+volumes:
+  pgdata:
+    driver: local
