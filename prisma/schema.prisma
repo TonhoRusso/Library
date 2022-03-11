@@ -35,15 +35,24 @@ model Book {
 }
 
 model User {
-  id       String @id @default(uuid())
-  name     String
-  email    String
-  userName String
-  password String
+  id              String     @id @default(uuid())
+  name            String
+  email           String     @unique
+  userName        String     @unique
+  password        String
+  permission      Permission
+  tokenValidation String?
+  login           Boolean    @default(false)
+  oldEmail        String?
 
-  Institution Institution[]
+  institution Institution[]
 
   @@map("user")
+}
+
+enum Permission {
+  ADMIN
+  COMMUN
 }
 
 model Institution {
