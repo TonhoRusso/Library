@@ -1,6 +1,7 @@
 import { IUserRepository } from '@modules/user/repositories/IUserRepository';
 import { ICreateUserAccountDTO } from '@modules/user/dtos/ICreateUserAccountDTO';
 import { User } from '@prisma/client';
+import { ICreateTokenValidationDTO } from '@modules/user/dtos/ICreateTokenValidationDTO';
 import { prisma } from '@shared/infra/http/prisma';
 
 class UserRepository implements IUserRepository {
@@ -37,6 +38,16 @@ class UserRepository implements IUserRepository {
 
   async findById(id: string): Promise<User | null> {
     return this.connection.findUnique({ where: { id } });
+  }
+
+  async updateToken(
+    tokenData: ICreateTokenValidationDTO
+  ): Promise<User | null> {
+    const { id, tokenValidation } = tokenData;
+    return this.connection.update({
+      where: { id },
+      data: { tokenValidation },
+    });
   }
 }
 
