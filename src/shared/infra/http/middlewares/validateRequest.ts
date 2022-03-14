@@ -5,6 +5,8 @@ import { ObjectShape } from 'yup/lib/object';
 import Reference from 'yup/lib/Reference';
 import { ValidateOptions } from 'yup/lib/types';
 
+import { AppError } from '@shared/errors/AppError';
+
 export interface IObjectValidation {
   body?: AnySchema | Reference;
   params?: AnySchema | Reference;
@@ -31,7 +33,9 @@ export function validateRequest<C = object>(
     } catch (error) {
       const validationError = new ValidationError(error as ValidationError);
 
-      console.log('ValidationError', validationError);
+      console.error('ValidationError', validationError);
+
+      throw AppError.ofYupError(validationError);
     }
   };
 }

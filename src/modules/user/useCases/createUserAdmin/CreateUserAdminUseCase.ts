@@ -8,7 +8,7 @@ import { CreateUserTokenUseCase } from '../createUserToken/CreateUserTokenUseCas
 import { IMailProvider } from '@shared/adapters/models/MailProvider';
 
 @injectable()
-class CreateUserUseCase {
+class CreateUserAdminUseCase {
   constructor(
     @inject('UserRepository')
     private userRepository: IUserRepository,
@@ -33,7 +33,6 @@ class CreateUserUseCase {
     if (userNameAlreadyExist) {
       throw new AppError('UserName already exist');
     }
-    userNameAlreadyExist;
 
     const hashPassword = await hash(password, 8);
 
@@ -44,9 +43,12 @@ class CreateUserUseCase {
 
     const createUserTokenUseCase = container.resolve(CreateUserTokenUseCase);
 
-    const validationToken = await createUserTokenUseCase.execute(user.id);
+    const tokenValidation = await createUserTokenUseCase.execute(user.id);
 
-    console.log(`tokenValidation ${validationToken}`);
+    console.log(`tokenValidation ${tokenValidation}`);
+
+    const urlToValidateToken = process.env.URL_TO_VALIDATE_TOKEN ?? '';
+    const constUrlWithTokenValidation = `${urlToValidateToken}/${tokenValidation}`;
 
     await this.mailProvider.sendEmail({
       subject: 'Cadastro realizado com sucesso',
@@ -58,11 +60,14 @@ class CreateUserUseCase {
         name: user.name,
         email: user.email,
       },
-      body: ` <p> Seja bem vindo ${user.name}</p>`,
+      body: ` <p>Olá ${user.name}</p>
+      Clique <a href="${constUrlWithTokenValidation}" target="_blank" rel="noopener noreferrer">aqui</a> para validar a sua conta`,
     });
 
-    return validationToken;
+    const userCreated = await this.userRepository.findById(user.id);
+
+    return userCreated;
   }
 }
 
-export { CreateUserUseCase };
+export { CreateUserAdminUseCase };

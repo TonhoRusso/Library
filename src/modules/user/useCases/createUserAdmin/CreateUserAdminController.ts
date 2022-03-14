@@ -1,19 +1,17 @@
 import { Request, Response } from 'express';
 import { container } from 'tsyringe';
 
-import { CreateUserUseCase } from './CreateUserAdminUseCase';
+import { CreateUserAdminUseCase } from './CreateUserAdminUseCase';
 
 class CreateUserController {
   async handle(request: Request, response: Response): Promise<Response> {
     const data = request.body;
 
-    console.log(data);
+    const createUserAdminUseCase = container.resolve(CreateUserAdminUseCase);
 
-    const createUserUseCase = container.resolve(CreateUserUseCase);
+    const user = await createUserAdminUseCase.execute(data);
 
-    const user = await createUserUseCase.execute(data);
-
-    return response.status(201).json(user);
+    return response.status(200).json(user);
   }
 }
 

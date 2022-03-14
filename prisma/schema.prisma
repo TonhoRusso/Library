@@ -17,37 +17,50 @@ enum Status {
 }
 
 model Book {
-  id                   String      @id @default(uuid())
-  bookName             String
-  edition              String
-  year                 String      @unique
-  releaseDate          DateTime
-  status               Status
-  institution          Institution @relation(fields: [institutionId], references: [id], onDelete: Cascade)
-  institutionId        String
-  quantity             Int
-  locationAddress      String
-  locationNumber       Int
-  locationZipCode      String
-  locationComplemation String
+  id                 String    @id @default(uuid())
+  bookName           String
+  edition            String
+  year               String
+  releaseDate        DateTime
+  status             Status
+  quantity           Int
+  locationAddress    String
+  locationNumber     Int
+  locationZipCode    String
+  locationComplement String
+  bookShop           BookShop? @relation(fields: [bookShopId], references: [id])
+  bookShopId         String?
 
   @@map("book")
 }
 
 model User {
-  id              String     @id @default(uuid())
-  name            String
-  email           String     @unique
-  userName        String     @unique
-  password        String
-  permission      Permission
-  tokenValidation String?
-  login           Boolean    @default(false)
-  oldEmail        String?
+  id               String     @id @default(uuid())
+  name             String
+  email            String     @unique
+  userName         String     @unique
+  password         String
+  permission       Permission
+  tokenValidation  String?
+  login            Boolean    @default(false)
+  oldEmail         String?
+  oldName          String?
+  newEmail         String?
+  newName          String?
+  newPassword      String?
+  confirmationHash String?
 
-  institution Institution[]
 
+  bookShopUsers BookShopUsers[]
   @@map("user")
+}
+
+model BookShopUsers {
+  id         String   @id @default(uuid())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     String
+  bookShop   BookShop @relation(fields: [bookShopId], references: [id], onDelete: Cascade)
+  bookShopId String
 }
 
 enum Permission {
@@ -55,17 +68,17 @@ enum Permission {
   COMMUN
 }
 
-model Institution {
-  id                   String @id @default(uuid())
-  nameOfInstitution    String @unique
-  address              String
-  addressNumber        String
-  zipCode              String
-  complement           String
-  admin                User   @relation(fields: [adminOfInstitutionId], references: [id], onDelete: Cascade)
-  adminOfInstitutionId String
+model BookShop {
+  id             String @id @default(uuid())
+  nameOfBookShop String @unique
+  address        String
+  addressNumber  String
+  zipCode        String
+  complement     String
+  admin          String
+  books          Book[]
 
-  Book Book[]
+  bookShopUsers BookShopUsers[]
 
-  @@map("institution")
+  @@map("bookShop")
 }
